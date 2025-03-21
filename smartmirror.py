@@ -20,8 +20,8 @@ news_country_code = 'in'
 
 # Weather API Settings (OpenWeatherMap)
 weather_api_token = '4dadecffa6e688e4a45f8fae8bf6ad0b'
-latitude = '18.525584'
-longitude = '73.845611'
+latitude = '18.5256'
+longitude = '73.8456'
 
 # UI sizes
 xlarge_text_size = 94
@@ -99,7 +99,7 @@ class Weather(Frame):
         self.forecast = ''
         self.currently = ''
         self.icon = ''
-        self.location = "Bengaluru, KA"
+        self.location = "Pune, MH"
 
         self.degreeFrm = Frame(self, bg="black")
         self.degreeFrm.pack(side=TOP, anchor=W)
@@ -130,9 +130,15 @@ class Weather(Frame):
             temp = int(weather_obj['main']['temp'])
             description = weather_obj['weather'][0]['description'].capitalize()
             icon_key = weather_obj['weather'][0]['main'].lower()
+            city = weather_obj['name']
+            country = weather_obj['sys']['country']
 
             temperature2 = f"{temp}°"
             forecast2 = description
+            
+            fp = open("Weather.json", "w")
+            fp.write(str(weather_obj))
+            fp.close()
 
             icon2 = icon_lookup.get(icon_key)
 
@@ -149,7 +155,7 @@ class Weather(Frame):
             self.temperatureLbl.config(text=temperature2)
             self.currentlyLbl.config(text=description)
             self.forecastLbl.config(text=forecast2)
-            self.locationLbl.config(text=self.location)
+            self.locationLbl.config(text=f"{city}, {country}")
 
         except Exception as e:
             traceback.print_exc()
