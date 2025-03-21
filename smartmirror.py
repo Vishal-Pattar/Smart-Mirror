@@ -13,7 +13,7 @@ from PIL import Image, ImageTk
 
 # Locale settings
 LOCALE_LOCK = threading.Lock()
-ui_locale = 'en_IN.UTF-8'
+ui_locale = 'en_US.utf8'
 time_format = 12
 date_format = "%b %d, %Y"
 news_country_code = 'in'
@@ -45,16 +45,13 @@ icon_lookup = {
 
 @contextmanager
 def setlocale(name):
-    with LOCALE_LOCK:
-        saved = locale.setlocale(locale.LC_ALL)
+    with LOCALE_LOCK:  # Lock to prevent thread issues
+        saved = locale.setlocale(locale.LC_ALL)  # Save the current locale
         try:
-            if name in locale.locale_alias:
-                yield locale.setlocale(locale.LC_ALL, name)
-            else:
-                raise locale.Error(f"Locale '{name}' not supported.")
+            locale.setlocale(locale.LC_ALL, name)  # Set new locale
+            yield locale.getlocale()  # Provide the new locale
         finally:
-            locale.setlocale(locale.LC_ALL, saved)
-
+            locale.setlocale(locale.LC_ALL, saved)  # Restore the original locale
 
 class Clock(Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -75,7 +72,7 @@ class Clock(Frame):
         self.tick()
 
     def tick(self):
-        with setlocale(ui_locale):
+        with setlocale("en_US.utf8"):
             time2 = time.strftime('%I:%M %p') if time_format == 12 else time.strftime('%H:%M')
             day_of_week2 = time.strftime('%A')
             date2 = time.strftime(date_format)
